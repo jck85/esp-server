@@ -21,7 +21,7 @@ const char index_html[] PROGMEM = R"rawliteral(
             align-items: center;
         }
 
-        header > h2 {
+        header>h2 {
             font-size: 3.0rem;
         }
 
@@ -72,7 +72,6 @@ const char index_html[] PROGMEM = R"rawliteral(
             -ms-transform: translateX(52px);
             transform: translateX(52px)
         }
-
     </style>
 </head>
 
@@ -83,53 +82,52 @@ const char index_html[] PROGMEM = R"rawliteral(
 
     <div id="button-template">
         %BUTTON_TEMPALTE%
-    <div>
+        <div>
 
-    <div id="gpio">
-        <label class="switch">
-            GPIO 4
-            <input type="checkbox" onchange="toggleCheckbox(this)" id="4">
-            <span class="slider"></span>
-        </label>
+            <div id="gpio">
+                <label class="switch">
+                    GPIO 4
+                    <input type="checkbox" onchange="toggleCheckbox(this)" id="4">
+                    <span class="slider"></span>
+                </label>
 
-        <label class="switch">
-        GPIO 5
-            <input type="checkbox" onchange="toggleCheckbox(this)" id="5">
-            <span class="slider"></span>
-        </label>
+                <label class="switch">
+                    GPIO 5
+                    <input type="checkbox" onchange="toggleCheckbox(this)" id="5">
+                    <span class="slider"></span>
+                </label>
 
-        <label class="switch">
-            GPIO 6
-            <input type="checkbox" onchange="toggleCheckbox(this)" id="6">
-            <span class="slider"></span>
-        </label>"
-    </div>
+                <label class="switch">
+                    GPIO 6
+                    <input type="checkbox" onchange="toggleCheckbox(this)" id="6">
+                    <span class="slider"></span>
+                </label>"
+            </div>
 
-    <script>
-        function toggleCheckbox(element) {
-            console.log("checkbox: ", element.id, element.checked);
+            <script>
+                function toggleCheckbox(element) {
+                    console.log("checkbox: ", element.id, element.checked);
 
-            var xhr = new XMLHttpRequest();
-            
-            let state = element.checked ? "1" : "0";
+                    var xhr = new XMLHttpRequest();
 
-            xhr.open("GET", "/update?gpio=" + element.id + "&state=" + state, true);
+                    let state = element.checked ? "1" : "0";
 
-            xhr.onload = () => {
-                if (xhr.status === 200) {
-                    const res = xhr.responseText;
-                    const data = JSON.parse(res);
-                    console.log("response: ", res);
-                } else {
-                    console.log("request failed");
+                    xhr.open("GET", "/update?gpio=" + element.id + "&state=" + state, true);
+
+                    xhr.onload = () => {
+                        if (xhr.status === 200) {
+                            const res = xhr.responseText;
+                            const data = JSON.parse(res);
+                            console.log("response: ", res);
+                        } else {
+                            console.log("request failed");
+                        }
+                    }
+
+                    xhr.send();
+
                 }
-            }
-
-            xhr.send();
-
-        }
-    </script>
+            </script>
 </body>
 
-</html>
-)rawliteral";
+</html>)rawliteral";

@@ -6,7 +6,6 @@
 #include "ArduinoJson-v7.4.2.h"
 #include "../secrets/wifi_creds.h"
 #include "index.h"
-#include "test.h"
 
 const char *param_1 = "gpio";
 const char *param_2 = "state";
@@ -52,7 +51,7 @@ void setup()
 
   // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send_P(200, "text/html", test_html, processor); });
+            { request->send_P(200, "text/html", index_html, processor); });
 
   // Send a GET request to <ESP_IP>/update?output=<msg_1>&state=<inputMessage2>
   server.on("/update", HTTP_GET, [](AsyncWebServerRequest *request)
