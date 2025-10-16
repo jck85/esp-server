@@ -1,10 +1,3 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// Copyright 2016-2025 Hristo Gochkov, Mathieu Carbou, Emil Muratov
-
-//
-// Show how to log the incoming request and response as a curl-like syntax
-//
-
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
 #include <AsyncTCP.h>
@@ -13,6 +6,7 @@
 #include "ArduinoJson-v7.4.2.h"
 #include "../secrets/wifi_creds.h"
 #include "index.h"
+#include "test.h"
 
 const char *param_1 = "gpio";
 const char *param_2 = "state";
@@ -53,12 +47,12 @@ void setup()
 
   requestLogger.setEnabled(true);
   requestLogger.setOutput(Serial);
-  
+
   server.addMiddleware(&requestLogger);
 
   // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send_P(200, "text/html", index_html, processor); });
+            { request->send_P(200, "text/html", test_html, processor); });
 
   // Send a GET request to <ESP_IP>/update?output=<msg_1>&state=<inputMessage2>
   server.on("/update", HTTP_GET, [](AsyncWebServerRequest *request)
