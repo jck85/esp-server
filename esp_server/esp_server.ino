@@ -35,7 +35,12 @@ String processor(const String &var)
 
 void setup()
 {
+
   Serial.begin(115200);
+
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
 
   WiFi.begin(WIFI_SSID, WIFI_PASS);
   while (WiFi.status() != WL_CONNECTED)
@@ -48,6 +53,7 @@ void setup()
 
   requestLogger.setEnabled(true);
   requestLogger.setOutput(Serial);
+  
   server.addMiddleware(&requestLogger);
 
   // Route for root / web page
@@ -66,6 +72,7 @@ void setup()
               if (request->hasParam("gpio") && request->hasParam("state")) {
                 gpio_num = request->getParam(param_1)->value();
                 gpio_state = request->getParam(param_2)->value();
+                digitalWrite(gpio_num.toInt(), gpio_state.toInt());
               }
               else {
                 gpio_num = "null";
@@ -85,5 +92,5 @@ void setup()
 
 void loop()
 {
-  delay(100);
+  // delay(100);
 }

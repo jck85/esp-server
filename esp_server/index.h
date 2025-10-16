@@ -111,7 +111,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 
             var xhr = new XMLHttpRequest();
             
-            let state = element.checked ? "HIGH" : "LOW";
+            let state = element.checked ? "1" : "0";
 
             xhr.open("GET", "/update?gpio=" + element.id + "&state=" + state, true);
 
