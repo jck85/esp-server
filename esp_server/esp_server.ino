@@ -28,7 +28,7 @@ String processor(const String &var)
 
 void index_handler(AsyncWebServerRequest *request)
 {
-  request->send_P(200, "text/html", index_html, processor);
+  request->send_P(200, "text/html", index_html);
 }
 
 void update_handler(AsyncWebServerRequest *request)
