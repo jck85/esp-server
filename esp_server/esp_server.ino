@@ -26,6 +26,41 @@ String processor(const String &var)
   return String();
 }
 
+void index_handler(AsyncWebServerRequest *request)
+{
+  request->send_P(200, "text/html", index_html, processor);
+}
+
+void update_handler(AsyncWebServerRequest *request)
+{
+
+  String gpio_num;
+  String gpio_state;
+
+  JsonDocument doc;
+
+  // GET /update?gpio=<gpio_num>&state=<gpio_state>
+  if (request->hasParam("gpio") && request->hasParam("state"))
+  {
+    gpio_num = request->getParam(param_1)->value();
+    gpio_state = request->getParam(param_2)->value();
+    digitalWrite(gpio_num.toInt(), gpio_state.toInt());
+  }
+  else
+  {
+    gpio_num = "null";
+    gpio_state = "null";
+  }
+
+  doc["gpio_num"] = gpio_num;
+  doc["gpio_state"] = gpio_state;
+  serializeJsonPretty(doc, Serial);
+
+  String response;
+  serializeJson(doc, response);
+  request->send(200, "application/json", response);
+}
+
 void setup()
 {
 
@@ -50,35 +85,39 @@ void setup()
   server.addMiddleware(&requestLogger);
 
   // Route for root / web page
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send_P(200, "text/html", index_html, processor); });
+  // server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+  //           { request->send_P(200, "text/html", index_html, processor); });
+
+  server.on("/", HTTP_GET, index_handler);
 
   // Send a GET request to <ESP_IP>/update?output=<msg_1>&state=<inputMessage2>
-  server.on("/update", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
-              String gpio_num;
-              String gpio_state;
+  // server.on("/update", HTTP_GET, [](AsyncWebServerRequest *request)
+  //           {
+  //             String gpio_num;
+  //             String gpio_state;
 
-              JsonDocument doc;
+  //             JsonDocument doc;
               
-              // GET /update?gpio=<gpio_num>&state=<gpio_state>
-              if (request->hasParam("gpio") && request->hasParam("state")) {
-                gpio_num = request->getParam(param_1)->value();
-                gpio_state = request->getParam(param_2)->value();
-                digitalWrite(gpio_num.toInt(), gpio_state.toInt());
-              }
-              else {
-                gpio_num = "null";
-                gpio_state = "null";
-              }
+  //             // GET /update?gpio=<gpio_num>&state=<gpio_state>
+  //             if (request->hasParam("gpio") && request->hasParam("state")) {
+  //               gpio_num = request->getParam(param_1)->value();
+  //               gpio_state = request->getParam(param_2)->value();
+  //               digitalWrite(gpio_num.toInt(), gpio_state.toInt());
+  //             }
+  //             else {
+  //               gpio_num = "null";
+  //               gpio_state = "null";
+  //             }
 
-                doc["gpio_num"] = gpio_num;
-                doc["gpio_state"] = gpio_state;
-                serializeJsonPretty(doc, Serial);
+  //               doc["gpio_num"] = gpio_num;
+  //               doc["gpio_state"] = gpio_state;
+  //               serializeJsonPretty(doc, Serial);
 
-                String response;
-                serializeJson(doc, response);
-                request->send(200, "application/json", response); });
+  //               String response;
+  //               serializeJson(doc, response);
+  //               request->send(200, "application/json", response); });
+
+  server.on("/update", HTTP_GET, update_handler);
 
   server.begin();
 }
