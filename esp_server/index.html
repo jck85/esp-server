@@ -69,8 +69,6 @@
         /* Esp Gui */
         .esp-gui {
             border: 2px solid black;
-            /* width: 30rem; */
-            /* height: 10rem; */
             padding: 1rem;
             display: flex;
             gap: 1rem;
@@ -96,46 +94,6 @@
             transform: scale(0.95);
         }
 
-        /* Switch Component */
-        /* .switch {
-            border: 2px solid black;
-            background-color: darkgrey;
-            width: 3rem;
-            height: 2rem;
-        }
-
-        .switch>label {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            display: inline-block;
-        }
-
-        .switch>label>input {
-            display: none;
-        }
-
-        .switch>label>span {
-            position: absolute;
-            content: "";
-            width: 50%;
-            height: 100%;
-            background-color: blue;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .switch:has(input[type="checkbox"]:checked) {
-            background-color: green;
-        }
-
-        .switch-input:checked+.slider {
-            -webkit-transform: translateX(2.5rem);
-            -ms-transform: translateX(2.5rem);
-            transform: translateX(2.5rem)
-        } */
-
-        /* tests */
         .switch {
             border: 2px solid black;
             background-color: darkgrey;
@@ -145,11 +103,6 @@
             display: inline-block;
         }
 
-        /* .switch>label {
-            width: 100%;
-            height: 100%;
-        } */
-
         .switch>label {
             position: absolute;
             margin: auto;
@@ -158,25 +111,22 @@
             height: 100%;
             display: flex;
             align-items: center;
-            /* justify-content: center; */
             z-index: 1;
         }
 
         .switch>input {
             display: none;
-            position: absolute;
-            left: 2rem;
+            /* position: absolute; */
+            /* left: 2rem; */
         }
 
         .switch>span {
             position: absolute;
+            content: "";
             left: -1.5px;
             top: -1.5px;
             border: 2px solid black;
             background-color: grey;
-            /* content: ""; */
-            /* width: 50%; */
-            /* height: 100%; */
             width: calc(50% + 3px);
             height: calc(100% + 3px);
             -webkit-transition: .3s;
@@ -191,8 +141,9 @@
         }
 
         .switch-input:checked+span {
-            /* -webkit-transform: translateX(calc(90% + 3px)); */
-            /* -ms-transform: translateX(calc(100% + 3px)); */
+            /* .switch:has(input:checked)+span { */
+            -webkit-transform: translateX(calc(75% + 3px));
+            -ms-transform: translateX(calc(75% + 3px));
             transform: translateX(calc(75% + 3px))
         }
     </style>
@@ -208,51 +159,25 @@
         <div id="esp-gui" class="esp-gui">
 
             <div class="button">
-                <button id="gpio-4" onclick="button_test(this)">4</button>
+                <button id="button-4" onclick="button_test(this)">4</button>
             </div>
 
             <div class="switch">
-                <!-- <label class="switch-label">
-                    4
-                    <input id="4" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
-                    <span class="slider"></span>
-                </label> -->
-                <!-- <p>GPIO 4</p> -->
-
-                <label for="4" class="switch-label"></label>
-                <input id="4" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
-                <span class="slider">4</span>
+                <label for="4" class="switch-label"> </label>
+                <input id="switch-4" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
+                <span class="slider"></span>
             </div>
 
-            <!-- <div class="switch">
-                <label class="switch-label">
-                    <input id="5" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
-                    <span class="slider"></span>
-                </label>
-                <p>GPIO 5</p>
-            </div> -->
-
-            <!-- <div class="switch">
-                <label class="switch-label">
-                    <input id="6" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
-                    <span class="slider"></span>
-                </label>
-                <p>GPIO 6</p>
-            </div> -->
         </div>
     </main>
 
     <script>
         function button_test(element) {
-            console.log(element.id)
-        }
-
-        function toggleCheckbox(element) {
-            console.log("checkbox: ", element.id, element.checked);
+            console.log("button: ", element.id);
 
             var xhr = new XMLHttpRequest();
 
-            let state = element.checked ? "1" : "0";
+            let state = "1";
 
             xhr.open("GET", "/update?gpio=" + element.id + "&state=" + state, true);
 
@@ -267,6 +192,28 @@
             }
 
             xhr.send();
+        }
+
+        function toggleCheckbox(element) {
+            console.log("slider: ", element.id, element.checked);
+
+            // var xhr = new XMLHttpRequest();
+
+            // let state = element.checked ? "1" : "0";
+
+            // xhr.open("GET", "/update?gpio=" + element.id + "&state=" + state, true);
+
+            // xhr.onload = () => {
+            //     if (xhr.status === 200) {
+            //         const res = xhr.responseText;
+            //         const data = JSON.parse(res);
+            //         console.log("response: ", res);
+            //     } else {
+            //         console.log("request failed");
+            //     }
+            // }
+
+            // xhr.send();
         }
     </script>
 </body>
