@@ -157,40 +157,57 @@
 
         <div id="esp-gui" class="esp-gui">
             <div class="button">
-                <button id="button-4" onclick="button_test(this)">4</button>
+                <button id="button-4" onclick="button_pressed(this)">4</button>
             </div>
 
             <div class="button">
-                <button id="button-5" onclick="button_test(this)">5</button>
+                <button id="button-5" onclick="button_pressed(this)">5</button>
             </div>
 
             <div class="switch">
                 <label for="switch-4" class="switch-label"></label>
-                <input id="switch-4" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
+                <input id="switch-4" class="switch-input" type="checkbox" onchange="switch_toggle(this)">
                 <span class="slider">4</span>
             </div>
 
             <div class="switch">
                 <label for="switch-5" class="switch-label"></label>
-                <input id="switch-5" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
+                <input id="switch-5" class="switch-input" type="checkbox" onchange="switch_toggle(this)">
                 <span class="slider">5</span>
             </div>
         </div>
     </main>
 
     <script>
-        function button_test(element) {
-            console.log(element.id)
-        }
 
-        function toggleCheckbox(element) {
-            console.log("checkbox: ", element.id, element.checked);
+        // params should be an object whose key value pairs
+        // will become the key value pairs of the query string
+        function esp_request(endpoint, params = []) {
 
             var xhr = new XMLHttpRequest();
 
-            let state = element.checked ? "1" : "0";
+            let url_string = "/" + endpoint;
 
-            xhr.open("GET", "/update?gpio=" + element.id + "&state=" + state, true);
+            // check if there are params to add
+            let keys = Object.keys(params);
+
+            if (keys.length !== 0) {
+                url_string += "?";
+                for (let i = 0; i < keys.length; i++) {
+                    let key = keys[i];
+                    let value = params[key];
+
+                    url_string += key + "=" + value;
+
+                    if (i !== keys.length - 1) {
+                        url_string += "&";
+                    }
+                }
+            }
+
+            console.log(url_string)
+
+            xhr.open("GET", url_string, true);
 
             xhr.onload = () => {
                 if (xhr.status === 200) {
@@ -203,6 +220,54 @@
             }
 
             xhr.send();
+        }
+
+        function button_test(element) {
+            console.log(element.id)
+        }
+
+        function button_pressed(element) {
+            console.log("button press: ", element.id);
+
+            let params = {
+                "id": element.id,
+                "gpio": element.id.split("-")[1],
+                "state": "pressed"
+            };
+
+            esp_request("update", params);
+        }
+
+        function switch_toggle(element) {
+            console.log("switch toggle: ", element.id, element.checked);
+
+            var xhr = new XMLHttpRequest();
+
+            let state = element.checked ? "1" : "0";
+
+            let url_string = "/update?gpio=" + element.id + "&state=" + state;
+
+            let params = {
+                "id": element.id,
+                "gpio": element.id.split("-")[1],
+                "state": state
+            };
+
+            // xhr.open("GET", url_string, true);
+
+            // xhr.onload = () => {
+            //     if (xhr.status === 200) {
+            //         const res = xhr.responseText;
+            //         const data = JSON.parse(res);
+            //         console.log("esp_resposne: ", res);
+            //     } else {
+            //         console.log("request failed: ", xhr.status);
+            //     }
+            // }
+
+            // xhr.send();
+
+            esp_request("update", params);
         }
     </script>
 </body>
