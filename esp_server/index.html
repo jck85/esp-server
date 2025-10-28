@@ -94,6 +94,7 @@
             transform: scale(0.95);
         }
 
+        /* tests */
         .switch {
             border: 2px solid black;
             background-color: darkgrey;
@@ -141,10 +142,9 @@
         }
 
         .switch-input:checked+span {
-            /* .switch:has(input:checked)+span { */
+            transform: translateX(calc(75% + 3px));
             -webkit-transform: translateX(calc(75% + 3px));
             -ms-transform: translateX(calc(75% + 3px));
-            transform: translateX(calc(75% + 3px))
         }
     </style>
 </head>
@@ -157,29 +157,56 @@
         </nav>
 
         <div id="esp-gui" class="esp-gui">
+            <div class="button">
+                <button id="button-4" onclick="button_pressed(this)">4</button>
+            </div>
 
             <div class="button">
-                <button id="button-4" onclick="button_test(this)">4</button>
+                <button id="button-5" onclick="button_pressed(this)">5</button>
             </div>
 
             <div class="switch">
-                <label for="4" class="switch-label"> </label>
-                <input id="switch-4" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
-                <span class="slider"></span>
+                <label for="switch-4" class="switch-label"></label>
+                <input id="switch-4" class="switch-input" type="checkbox" onchange="switch_toggle(this)">
+                <span class="slider">4</span>
             </div>
 
+            <div class="switch">
+                <label for="switch-5" class="switch-label"></label>
+                <input id="switch-5" class="switch-input" type="checkbox" onchange="switch_toggle(this)">
+                <span class="slider">5</span>
+            </div>
         </div>
     </main>
 
     <script>
-        function button_test(element) {
-            console.log("button: ", element.id);
+
+        // params should be an object whose key value pairs
+        // will become the key value pairs of the query string
+        function esp_request(endpoint, params = []) {
 
             var xhr = new XMLHttpRequest();
 
-            let state = "1";
+            let url_string = "/" + endpoint;
 
-            xhr.open("GET", "/update?gpio=" + element.id + "&state=" + state, true);
+            // check if there are params to add
+            let keys = Object.keys(params);
+
+            if (keys.length !== 0) {
+                url_string += "?";
+                for (let i = 0; i < keys.length; i++) {
+                    let key = keys[i];
+                    let value = params[key];
+
+                    url_string += key + "=" + value;
+
+                    if (i !== keys.length - 1) {
+                        url_string += "&";
+                    }
+                }
+            }
+
+            xhr.open("GET", url_string, true);
 
             xhr.onload = () => {
                 if (xhr.status === 200) {
@@ -194,26 +221,31 @@
             xhr.send();
         }
 
-        function toggleCheckbox(element) {
-            console.log("slider: ", element.id, element.checked);
+        function button_pressed(element) {
+            let params = {
+                "id": element.id,
+                "gpio": element.id.split("-")[1],
+                "state": "pressed"
+            };
 
-            // var xhr = new XMLHttpRequest();
+            esp_request("update", params);
+        }
 
-            // let state = element.checked ? "1" : "0";
+        function switch_toggle(element) {
 
-            // xhr.open("GET", "/update?gpio=" + element.id + "&state=" + state, true);
+            var xhr = new XMLHttpRequest();
 
-            // xhr.onload = () => {
-            //     if (xhr.status === 200) {
-            //         const res = xhr.responseText;
-            //         const data = JSON.parse(res);
-            //         console.log("response: ", res);
-            //     } else {
-            //         console.log("request failed");
-            //     }
-            // }
+            let state = element.checked ? "1" : "0";
 
-            // xhr.send();
+            let url_string = "/update?gpio=" + element.id + "&state=" + state;
+
+            let params = {
+                "id": element.id,
+                "gpio": element.id.split("-")[1],
+                "state": state
+            };
+
+            esp_request("update", params);
         }
     </script>
 </body>

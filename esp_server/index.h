@@ -7,14 +7,23 @@ const char index_html[] PROGMEM = R"rawliteral(
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="data:,">
     <style>
+        *,
+        *:before,
+        *:after {
+            box-sizing: border-box;
+        }
+
+        /* Set defaults for common html tags */
         body {
-            margin: 0;
-            background-color: white;
             font-family: monospace;
-            padding-top: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            font-size: 100%;
+            border: 4px solid black;
+            width: 40rem;
+            height: 30rem;
+            margin: auto;
+            padding: 1rem;
+            overflow-y: scroll;
+            color: black;
         }
 
         h1,
@@ -26,109 +35,179 @@ const char index_html[] PROGMEM = R"rawliteral(
             margin: 0;
         }
 
-        nav {
-            padding: 0;
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            border: none;
+            background: none;
+            font-family: monospace;
+        }
+
+        a:hover,
+        button:hover,
+        input:hover,
+        label:hover {
+            cursor: pointer;
+        }
+
+        /* App Styling*/
+        .app {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 0.2rem;
         }
 
-        .nav-title {
-            font-size: 1.4rem;
+        /* App Menu */
+        nav {
+            border: 2px solid black;
+            background-color: darkgrey;
+            display: flex;
         }
 
-        .gpio-gui {
-            border: 4px solid black;
-            width: 30rem;
-            height: 10rem;
+        /* Esp Gui */
+        .esp-gui {
+            border: 2px solid black;
             padding: 1rem;
             display: flex;
             gap: 1rem;
         }
 
-        /* GUI ELEMENTS */
-        .switch {
-            border: 4px solid black;
-            width: 5rem;
-            height: 3rem;
+        /* GUI Elements */
+
+        /* Button Component */
+        .button {
+            border: 2px solid black;
             background-color: darkgrey;
+            width: 2rem;
+            height: 2rem;
         }
 
-        .switch-label {
+        .button>button {
             width: 100%;
             height: 100%;
+        }
+
+        .button:has(button:active) {
+            background-color: green;
+            transform: scale(0.95);
+        }
+
+        /* tests */
+        .switch {
+            border: 2px solid black;
+            background-color: darkgrey;
+            width: 3rem;
+            height: 2rem;
             position: relative;
             display: inline-block;
         }
 
-        .switch-label input {
-            display: none;
+        .switch>label {
+            position: absolute;
+            margin: auto;
+            padding-left: 25%;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            z-index: 1;
         }
 
-        .slider {
+        .switch>input {
+            display: none;
+            /* position: absolute; */
+            /* left: 2rem; */
+        }
+
+        .switch>span {
             position: absolute;
             content: "";
-            width: 50%;
-            height: 100%;
-            background-color: blue;
-            -webkit-transition: .4s;
-            transition: .4s;
+            left: -1.5px;
+            top: -1.5px;
+            border: 2px solid black;
+            background-color: grey;
+            width: calc(50% + 3px);
+            height: calc(100% + 3px);
+            -webkit-transition: .3s;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .switch:has(input[type="checkbox"]:checked) {
             background-color: green;
         }
 
-        .switch-input:checked+.slider {
-            -webkit-transform: translateX(2.5rem);
-            -ms-transform: translateX(2.5rem);
-            transform: translateX(2.5rem)
+        .switch-input:checked+span {
+            transform: translateX(calc(75% + 3px));
+            -webkit-transform: translateX(calc(75% + 3px));
+            -ms-transform: translateX(calc(75% + 3px));
         }
     </style>
 </head>
 
 <body>
-    <nav>
-        <div class="nav-title">
+
+    <main class="app">
+        <nav>
             <h2>ESP Web Server</h2>
-        </div>
-    </nav>
+        </nav>
 
-    <main>
-        <div id="gpio-gui" class="gpio-gui">
-            <div class="switch">
-                <label class="switch-label">
-                    <input id="4" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
-                    <span class="slider"></span>
-                </label>
-                <p>GPIO 4</p>
+        <div id="esp-gui" class="esp-gui">
+            <div class="button">
+                <button id="button-4" onclick="button_pressed(this)">4</button>
             </div>
-            <div class="switch">
-                <label class="switch-label">
-                    <input id="5" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
-                    <span class="slider"></span>
-                </label>
-                <p>GPIO 5</p>
+
+            <div class="button">
+                <button id="button-5" onclick="button_pressed(this)">5</button>
             </div>
+
             <div class="switch">
-                <label class="switch-label">
-                    <input id="6" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
-                    <span class="slider"></span>
-                </label>
-                <p>GPIO 6</p>
+                <label for="switch-4" class="switch-label"></label>
+                <input id="switch-4" class="switch-input" type="checkbox" onchange="switch_toggle(this)">
+                <span class="slider">4</span>
+            </div>
+
+            <div class="switch">
+                <label for="switch-5" class="switch-label"></label>
+                <input id="switch-5" class="switch-input" type="checkbox" onchange="switch_toggle(this)">
+                <span class="slider">5</span>
             </div>
         </div>
-
     </main>
+
     <script>
-        function toggleCheckbox(element) {
-            console.log("checkbox: ", element.id, element.checked);
+
+        // params should be an object whose key value pairs
+        // will become the key value pairs of the query string
+        function esp_request(endpoint, params = []) {
 
             var xhr = new XMLHttpRequest();
 
-            let state = element.checked ? "1" : "0";
+            let url_string = "/" + endpoint;
 
-            xhr.open("GET", "/update?gpio=" + element.id + "&state=" + state, true);
+            // check if there are params to add
+            let keys = Object.keys(params);
+
+            if (keys.length !== 0) {
+                url_string += "?";
+                for (let i = 0; i < keys.length; i++) {
+                    let key = keys[i];
+                    let value = params[key];
+
+                    url_string += key + "=" + value;
+
+                    if (i !== keys.length - 1) {
+                        url_string += "&";
+                    }
+                }
+            }
+
+            xhr.open("GET", url_string, true);
 
             xhr.onload = () => {
                 if (xhr.status === 200) {
@@ -141,7 +220,33 @@ const char index_html[] PROGMEM = R"rawliteral(
             }
 
             xhr.send();
+        }
 
+        function button_pressed(element) {
+            let params = {
+                "id": element.id,
+                "gpio": element.id.split("-")[1],
+                "state": "pressed"
+            };
+
+            esp_request("update", params);
+        }
+
+        function switch_toggle(element) {
+
+            var xhr = new XMLHttpRequest();
+
+            let state = element.checked ? "1" : "0";
+
+            let url_string = "/update?gpio=" + element.id + "&state=" + state;
+
+            let params = {
+                "id": element.id,
+                "gpio": element.id.split("-")[1],
+                "state": state
+            };
+
+            esp_request("update", params);
         }
     </script>
 </body>
