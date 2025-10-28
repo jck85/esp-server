@@ -206,8 +206,6 @@ const char index_html[] PROGMEM = R"rawliteral(
                 }
             }
 
-            console.log(url_string)
-
             xhr.open("GET", url_string, true);
 
             xhr.onload = () => {
@@ -223,13 +221,7 @@ const char index_html[] PROGMEM = R"rawliteral(
             xhr.send();
         }
 
-        function button_test(element) {
-            console.log(element.id)
-        }
-
         function button_pressed(element) {
-            console.log("button press: ", element.id);
-
             let params = {
                 "id": element.id,
                 "gpio": element.id.split("-")[1],
@@ -240,7 +232,6 @@ const char index_html[] PROGMEM = R"rawliteral(
         }
 
         function switch_toggle(element) {
-            console.log("switch toggle: ", element.id, element.checked);
 
             var xhr = new XMLHttpRequest();
 
@@ -253,20 +244,6 @@ const char index_html[] PROGMEM = R"rawliteral(
                 "gpio": element.id.split("-")[1],
                 "state": state
             };
-
-            // xhr.open("GET", url_string, true);
-
-            // xhr.onload = () => {
-            //     if (xhr.status === 200) {
-            //         const res = xhr.responseText;
-            //         const data = JSON.parse(res);
-            //         console.log("esp_resposne: ", res);
-            //     } else {
-            //         console.log("request failed: ", xhr.status);
-            //     }
-            // }
-
-            // xhr.send();
 
             esp_request("update", params);
         }

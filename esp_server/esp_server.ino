@@ -3,12 +3,9 @@
 #include <AsyncTCP.h>
 #include <WiFi.h>
 
-#include "ArduinoJson-v7.4.2.h"
-#include "../secrets/wifi_creds.h"
+#include "lib/ArduinoJson-v7.4.2.h"
+#include "secrets/wifi_creds.h"
 #include "index.h"
-
-const char *param_1 = "gpio";
-const char *param_2 = "state";
 
 static AsyncWebServer server(80);
 static AsyncLoggingMiddleware requestLogger;
@@ -34,8 +31,6 @@ void index_handler(AsyncWebServerRequest *request)
 void update_handler(AsyncWebServerRequest *request)
 {
 
-  String gpio_num;
-  String gpio_state;
   JsonDocument doc;
 
   int params = request->params();
