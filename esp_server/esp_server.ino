@@ -17,7 +17,7 @@ static AsyncLoggingMiddleware requestLogger;
 String processor(const String &var)
 {
   Serial.println(var);
-  if (var == "BUTTON_TEMPALTE")
+  if (var == "%BUTTON_TEMPALTE%")
   {
     String button_string = "<button>button</button>";
     return button_string;
@@ -97,7 +97,7 @@ void setup()
   //             String gpio_state;
 
   //             JsonDocument doc;
-              
+
   //             // GET /update?gpio=<gpio_num>&state=<gpio_state>
   //             if (request->hasParam("gpio") && request->hasParam("state")) {
   //               gpio_num = request->getParam(param_1)->value();

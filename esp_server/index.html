@@ -156,15 +156,24 @@
         </nav>
 
         <div id="esp-gui" class="esp-gui">
+            <div class="button">
+                <button id="button-4" onclick="button_test(this)">4</button>
+            </div>
 
             <div class="button">
-                <button id="gpio-4" onclick="button_test(this)">4</button>
+                <button id="button-5" onclick="button_test(this)">5</button>
             </div>
 
             <div class="switch">
-                <label for="4" class="switch-label"></label>
-                <input id="4" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
+                <label for="switch-4" class="switch-label"></label>
+                <input id="switch-4" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
                 <span class="slider">4</span>
+            </div>
+
+            <div class="switch">
+                <label for="switch-5" class="switch-label"></label>
+                <input id="switch-5" class="switch-input" type="checkbox" onchange="toggleCheckbox(this)">
+                <span class="slider">5</span>
             </div>
         </div>
     </main>
