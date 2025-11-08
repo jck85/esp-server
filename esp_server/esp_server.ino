@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <ESPAsyncWebServer.h>
+#include "ESPAsyncWebServer.h"
 #include <AsyncTCP.h>
 #include <WiFi.h>
 
@@ -61,6 +61,10 @@ void update_handler(AsyncWebServerRequest *request)
   serializeJson(doc, response);
 
   request->send(200, "application/json", response);
+}
+
+void ws_handler()
+{
 }
 
 void setup()

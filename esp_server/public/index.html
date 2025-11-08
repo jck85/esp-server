@@ -246,6 +246,40 @@
 
             esp_request("update", params);
         }
+
+        // Web Sockets
+        const ws_gateway = `ws://127.0.0.1/ws`;
+        let ws;
+
+        function ws_init() {
+            console.log("Initializing Web Socket")
+            ws = new WebSocket(gateway)
+            ws.onopen = wsOnOpen();
+            ws.onclose = wsOnClose();
+            ws.onmessage = wsOnMessage();
+        }
+
+        function wsOnOpen() {
+            console.log("Web Socket Connection OPEN")
+        }
+
+        function wsOnClose() {
+            console.log("Web Socket Connection CLOSE")
+        }
+
+        function wsOnMessage(event) {
+            console.log(event.data)
+        }
+
+        function ws_send() {
+            ws.send("ws_send");
+        }
+
+        window.onload = (event) => {
+            ws_init();
+        };
+
+
     </script>
 </body>
 
