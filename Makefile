@@ -2,7 +2,7 @@
 #
 
 compile:
-	./scripts/build_html.sh
+	./esp_server/scripts/build_html.sh
 	arduino-cli compile --fqbn esp32:esp32:esp32s3 esp_server
 
 upload: 

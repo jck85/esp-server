@@ -156,6 +156,18 @@ const char index_html[] PROGMEM = R"rawliteral(
             <h2>ESP Web Server</h2>
         </nav>
 
+
+        <div class="content">
+            <div class="card">
+                <h2>Output - GPIO 2</h2>
+                <p class="state">state: <span id="state">%STATE%</span></p>
+                <div class="button">
+                    <button id="ws-button" onclick="ws_send(this)">Toggle</button>
+                </div>
+            </div>
+        </div>
+
+
         <div id="esp-gui" class="esp-gui">
             <div class="button">
                 <button id="button-4" onclick="button_pressed(this)">4</button>
@@ -247,6 +259,40 @@ const char index_html[] PROGMEM = R"rawliteral(
 
             esp_request("update", params);
         }
+
+        // Web Sockets
+        const ws_gateway = `ws://192.168.1.119:8080/ws`;
+        let ws;
+
+        function ws_init() {
+            console.log("Initializing Web Socket")
+            ws = new WebSocket(ws_gateway)
+            ws.onopen = wsOnOpen;
+            ws.onclose = wsOnClose;
+            ws.onmessage = wsOnMessage;
+        }
+
+        function wsOnOpen() {
+            console.log("Web Socket Connection Open")
+        }
+
+        function wsOnClose() {
+            console.log("Web Socket Connection Closed")
+        }
+
+        function wsOnMessage(event) {
+            console.log(event.data)
+        }
+
+        function ws_send() {
+            ws.send("toggle");
+        }
+
+        window.onload = (event) => {
+            ws_init();
+        };
+
+
     </script>
 </body>
 
