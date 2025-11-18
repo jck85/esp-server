@@ -1,12 +1,13 @@
 #include <Arduino.h>
-#include "ESPAsyncWebServer.h"
+
+#include <ESPAsyncWebServer.h>
 #include <AsyncTCP.h>
+
 #include <WiFi.h>
 
 #include "lib/ArduinoJson-v7.4.2.h"
 #include "secrets/wifi_creds.h"
 #include "server/index.h"
-// #include "ws/ws-html.h"
 
 AsyncWebServer server(8080);
 AsyncWebSocket ws("/ws");
@@ -14,18 +15,7 @@ AsyncLoggingMiddleware requestLogger;
 
 bool ledState = 0;
 const int ledPin = 7;
-
-// Process index_html and add template
-// String processor(const String &var)
-// {
-//   Serial.println(var);
-//   if (var == "%BUTTON_TEMPALTE%")
-//   {
-//     String button_string = "<button>button</button>";
-//     return button_string;
-//   }
-//   return String();
-// }
+String esp_ip = "";
 
 void index_handler(AsyncWebServerRequest *request)
 {
@@ -67,7 +57,7 @@ void update_handler(AsyncWebServerRequest *request)
   request->send(200, "application/json", response);
 }
 
-// Websocktes
+// Websockets
 void ws_handler(AsyncWebServerRequest *request)
 {
   request->send_P(200, "text/html", index_html);
@@ -127,13 +117,18 @@ void setup()
   digitalWrite(ledPin, LOW);
 
   WiFi.begin(WIFI_SSID, WIFI_PASS);
+  Serial.print("Connecting to WiFi...");
   while (WiFi.status() != WL_CONNECTED)
   {
-    Serial.println("Connecting to WiFi..");
+    Serial.print(".");
+    delay(250);
   }
+  Serial.println();
+
+  esp_ip = WiFi.localIP().toString();
 
   Serial.print("ESP IP:\t");
-  Serial.println(WiFi.localIP());
+  Serial.println(esp_ip);
 
   // Logging info
   // requestLogger.setEnabled(true);
@@ -148,8 +143,6 @@ void setup()
   server.on("/update", HTTP_GET, update_handler);
 
   server.on("/ws", HTTP_GET, ws_handler);
-  // [](AsyncWebServerRequest *request)
-  // { request->send(200, "text/html", index_html, processor); });
 
   server.begin();
 }

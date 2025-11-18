@@ -31,7 +31,8 @@ const char index_html[] PROGMEM = R"rawliteral(
         h3,
         h4,
         h5,
-        h6 {
+        h6,
+        p {
             margin: 0;
         }
 
@@ -53,6 +54,11 @@ const char index_html[] PROGMEM = R"rawliteral(
             cursor: pointer;
         }
 
+        button:active {
+            background-color: green;
+            transform: scale(0.95);
+        }
+
         /* App Styling*/
         .app {
             display: flex;
@@ -65,6 +71,7 @@ const char index_html[] PROGMEM = R"rawliteral(
             border: 2px solid black;
             background-color: darkgrey;
             display: flex;
+            padding-left: 2rem;
         }
 
         /* Esp Gui */
@@ -72,27 +79,32 @@ const char index_html[] PROGMEM = R"rawliteral(
             border: 2px solid black;
             padding: 1rem;
             display: flex;
+            align-items: center;
             gap: 1rem;
         }
 
         /* GUI Elements */
+        .ws-button>button {
+            border: 2px solid black;
+            /* background-color: darkgrey; */
+            width: 6rem;
+            height: 2rem;
+        }
 
-        /* Button Component */
-        .button {
+        /* .button {
             border: 2px solid black;
             background-color: darkgrey;
             width: 2rem;
             height: 2rem;
-        }
+        } */
 
         .button>button {
-            width: 100%;
-            height: 100%;
-        }
-
-        .button:has(button:active) {
-            background-color: green;
-            transform: scale(0.95);
+            border: 2px solid black;
+            /* background-color: darkgrey; */
+            width: 2rem;
+            height: 2rem;
+            /* width: 100%;
+            height: 100%; */
         }
 
         /* tests */
@@ -154,17 +166,16 @@ const char index_html[] PROGMEM = R"rawliteral(
     <main class="app">
         <nav>
             <h2>ESP Web Server</h2>
+            %BUTTON_TEMPALTE%
         </nav>
 
-
-        <div class="content">
-            <div class="card">
-                <h2>Output - GPIO 2</h2>
-                <p class="state">state: <span id="state">%STATE%</span></p>
-                <div class="button">
-                    <button id="ws-button" onclick="ws_send(this)">Toggle</button>
-                </div>
+        <div id="esp-ws-gui" class="esp-gui">
+            <p>STATUS: <span id="ws-status">OFF</span></p>
+            <div class="ws-button">
+                <button id="ws-send" onclick="ws_send(this)">Toggle</button>
             </div>
+        </div>
+
         </div>
 
 
@@ -261,7 +272,8 @@ const char index_html[] PROGMEM = R"rawliteral(
         }
 
         // Web Sockets
-        const ws_gateway = `ws://192.168.1.119:8080/ws`;
+        const ws_ip = `%WS_IP_ADDRESS%`;
+        const ws_gateway = `ws://192.168.1.169:8080/ws`;
         let ws;
 
         function ws_init() {
@@ -281,7 +293,15 @@ const char index_html[] PROGMEM = R"rawliteral(
         }
 
         function wsOnMessage(event) {
-            console.log(event.data)
+            console.log("ws event: ", event.data);
+            let state = "NIL";
+            if (event.data == "1") {
+                state = "ON";
+            }
+            else {
+                state = "OFF";
+            }
+            document.getElementById('ws-status').innerHTML = state;
         }
 
         function ws_send() {
