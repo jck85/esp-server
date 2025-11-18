@@ -1,9 +1,7 @@
 #include <Arduino.h>
-
-#include <ESPAsyncWebServer.h>
 #include <AsyncTCP.h>
-
 #include <WiFi.h>
+#include <ESPAsyncWebServer.h>
 
 #include "lib/ArduinoJson-v7.4.2.h"
 #include "secrets/wifi_creds.h"
@@ -26,6 +24,7 @@ void update_handler(AsyncWebServerRequest *request)
 {
 
   JsonDocument doc;
+  String response;
 
   int params = request->params();
   Serial.printf("Param count: %d\n", params);
@@ -48,19 +47,20 @@ void update_handler(AsyncWebServerRequest *request)
     }
   }
 
-  serializeJsonPretty(doc, Serial);
-  Serial.println();
-
-  String response;
   serializeJson(doc, response);
-
   request->send(200, "application/json", response);
 }
 
 // Websockets
 void ws_handler(AsyncWebServerRequest *request)
 {
-  request->send_P(200, "text/html", index_html);
+  JsonDocument doc;
+  String response;
+
+  doc["msg"] = "WS OK";
+
+  serializeJson(doc, response);
+  request->send(200, "application/json", response);
 }
 
 void ws_event(AsyncWebSocket *server,
@@ -78,10 +78,10 @@ void ws_event(AsyncWebSocket *server,
   switch (type)
   {
   case WS_EVT_CONNECT:
-    Serial.printf("WS Client Connectd: %d %s\n", client_id, client->remoteIP().toString().c_str());
+    Serial.printf("WS Client Connected: %d %s\n", client_id, client->remoteIP().toString().c_str());
     break;
   case WS_EVT_DISCONNECT:
-    Serial.printf("WS: client #%u disconnected\n", client->id());
+    Serial.printf("WS Client Disconnected: %d\n", client->id());
     break;
   case WS_EVT_DATA:
     if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT)
@@ -90,7 +90,6 @@ void ws_event(AsyncWebSocket *server,
       if (strcmp((char *)data, "toggle") == 0)
       {
         ledState = !ledState;
-
         ws.textAll(String(ledState));
       }
     }

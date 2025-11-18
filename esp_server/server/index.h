@@ -178,7 +178,6 @@ const char index_html[] PROGMEM = R"rawliteral(
 
         </div>
 
-
         <div id="esp-gui" class="esp-gui">
             <div class="button">
                 <button id="button-4" onclick="button_pressed(this)">4</button>
@@ -272,7 +271,6 @@ const char index_html[] PROGMEM = R"rawliteral(
         }
 
         // Web Sockets
-        const ws_ip = `%WS_IP_ADDRESS%`;
         const ws_gateway = `ws://192.168.1.169:8080/ws`;
         let ws;
 
