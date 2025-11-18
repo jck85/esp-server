@@ -1,2 +1,8 @@
+<<<<<<< HEAD
 secrets/
 esp_server/index.h
+=======
+.vscode/
+.archive/
+secrets/
+>>>>>>> dev
