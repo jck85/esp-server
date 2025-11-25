@@ -166,7 +166,6 @@ const char index_html[] PROGMEM = R"rawliteral(
     <main class="app">
         <nav>
             <h2>ESP Web Server</h2>
-            %BUTTON_TEMPALTE%
         </nav>
 
         <div id="esp-ws-gui" class="esp-gui">

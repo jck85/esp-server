@@ -122,12 +122,12 @@ void setup()
     Serial.print(".");
     delay(250);
   }
-  Serial.println();
+  Serial.println("Connected");
+  delay(2000);
 
   esp_ip = WiFi.localIP().toString();
 
-  Serial.print("ESP IP:\t");
-  Serial.println(esp_ip);
+  Serial.printf("ESP IP: %s:8080\n", esp_ip);
 
   // Logging info
   // requestLogger.setEnabled(true);
@@ -144,6 +144,7 @@ void setup()
   server.on("/ws", HTTP_GET, ws_handler);
 
   server.begin();
+  Serial.println("Esp Server Started");
 }
 
 void loop()
