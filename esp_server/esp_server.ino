@@ -11,6 +11,12 @@ AsyncWebServer server(8080);
 AsyncWebSocket ws("/ws");
 AsyncLoggingMiddleware requestLogger;
 
+IPAddress local_IP(192, 168, 1, 101);
+IPAddress gateway(192, 168, 1, 1);
+IPAddress subnet(255, 255, 255, 0);
+IPAddress primaryDNS(192, 168, 1, 1);
+IPAddress secondaryDNS(8, 8, 8, 8);
+
 bool ledState = 0;
 const int ledPin = 7;
 String esp_ip = "";
@@ -114,6 +120,12 @@ void setup()
 
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
+
+  // Configures static IP address
+  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS))
+  {
+    Serial.println("STA Failed to configure");
+  }
 
   WiFi.begin(WIFI_SSID, WIFI_PASS);
   Serial.print("Connecting to WiFi...");

@@ -271,7 +271,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         }
 
         // Web Sockets
-        const ws_gateway = `ws://192.168.1.169:8080/ws`;
+        const ws_gateway = `ws://192.168.1.101:8080/ws`;
         let ws;
 
         function ws_init() {
