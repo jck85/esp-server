@@ -97,6 +97,7 @@ void ws_event(AsyncWebSocket *server,
       {
         ledState = !ledState;
         ws.textAll(String(ledState));
+        Serial.printf("ws event toggle\n");
       }
     }
     break;
