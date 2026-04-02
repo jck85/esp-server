@@ -21,6 +21,10 @@ bool ledState = 0;
 const int ledPin = 7;
 String esp_ip = "";
 
+unsigned long current = 0;
+unsigned long previous = 0;
+unsigned long interval = 100;
+
 void index_handler(AsyncWebServerRequest *request)
 {
   request->send_P(200, "text/html", index_html);
@@ -33,7 +37,7 @@ void update_handler(AsyncWebServerRequest *request)
   String response;
 
   int params = request->params();
-  Serial.printf("Param count: %d\n", params);
+  Serial.printf("\nParam count: %d\n", params);
 
   if (params == 0)
   {
@@ -123,10 +127,10 @@ void setup()
   digitalWrite(ledPin, LOW);
 
   // Configures static IP address
-  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS))
-  {
-    Serial.println("STA Failed to configure");
-  }
+  // if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS))
+  // {
+  //   Serial.println("STA Failed to configure");
+  // }
 
   WiFi.begin(WIFI_SSID, WIFI_PASS);
   Serial.print("Connecting to WiFi...");
@@ -139,8 +143,6 @@ void setup()
   delay(2000);
 
   esp_ip = WiFi.localIP().toString();
-
-  Serial.printf("ESP IP: %s:8080\n", esp_ip);
 
   // Logging info
   // requestLogger.setEnabled(true);
@@ -158,10 +160,17 @@ void setup()
 
   server.begin();
   Serial.println("Esp Server Started");
+  Serial.printf("\nESP Server @: http://%s:8080\n", esp_ip);
 }
 
 void loop()
 {
   ws.cleanupClients();
-  digitalWrite(ledPin, ledState);
+
+  current = millis();
+  if (current - previous > interval)
+  {
+    digitalWrite(ledPin, ledState);
+    previous = current;
+  }
 }

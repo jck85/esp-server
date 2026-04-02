@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "system_error": "cpp",
-        "ostream": "cpp",
-        "cstdint": "cpp",
-        "new": "cpp"
-    }
-}
